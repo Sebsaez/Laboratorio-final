@@ -5,10 +5,21 @@ on:
       - featlabfinal
 
 jobs:
-  Build:
+  SAST:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Hola Mundo
-      run: |
-        echo "Hola Mundo"
+    - name: Set up JDK 17
+      uses: action/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Checkout code
+      uses: action/checkout@v2
+
+    - name: Build
+      run:  |
+        chmod 777 gradlew
+        ./gradlew build
+
