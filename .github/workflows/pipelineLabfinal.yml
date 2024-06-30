@@ -18,6 +18,10 @@ jobs:
     - name: Checkout code
       uses: action/checkout@v2
 
+    - name: Hola Mundo
+      run: |
+        echo 'Hola mundo'
+
     - name: Build
       run: |
         chmod 777 gradlew
@@ -26,22 +30,27 @@ jobs:
     - name: Validando existencia de proyecto en SonarCloud
       id: validateProjectOnSonar
       run: |
+        #pwd
+        #ls -R
         set +e
         curl -f -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.oi/api/projects/create' -d 'name=${{ github.event.repository.name }}' -d 'project=${{ github.event.repository.name }}' -d 'visibility=public'
-        if [ $? -ne 0 ]
-        then
+        if [ $? -ne 0 ]; then        
           echo "Proyecto ya existe en SonarCloud"
+          echo "::set-output name=proyectoExiste::1"
         else
           echo "Proyecto $${{ github.event.repository.name }} fue creado exitosamente en SonarCloud"
 
           echo "Se establece rama main como rama por defecto"
           curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.oi/api/project_branches/rename' -d 'name=main   -d 'project=${{ github.event.repository.name }}'
         fi
+        set -e
 
     - name: Validando tipo de proyecto
       id: tipoProyecto
       if: steps.validateProjectOnSonar.outputs.proyectoExiste == '1'
       run: |
+        pwd
+        ls -R
         if [ -f "build.gradle"]
         then
           echo "Proyecto Java"
@@ -53,9 +62,15 @@ jobs:
             echo "El plugin de SonarCloud ya está presente en build.gradle"
             cat build.gradle
           fi
+
         else
           echo "Tipo de proyecto desconocido"
-        fi    
+        fi 
+
+
+    - name: Enable execution gradlew
+      run: |
+        chmod 777 gradlew    
 
     - name: Run SonarQube analisis
       run: |
@@ -67,7 +82,40 @@ jobs:
 
 
 
+#--------------------------------------------------SCA------------------------------------------------#
 
+SCA:
+  needs: SAST
+  runs-on: ubuntu-latest
+  steps:
+
+  - name: Checkout code
+    uses: actions/checkout@v2
+
+  - name: Build
+      run: |
+        chmod 777 gradlew
+        ./gradlew build 
+
+  - name: Dependency Check
+    uses: dependency-check/Dependency-Check_Action@1.1.0
+    env:
+      JAVA_HOME: /opt/jdk
+    id: Depcheck
+    with: 
+      project: '${{ github.event.repository.name}}'
+      path: '.'
+      format: 'HTML'
+      out: 'report'
+      args: >
+        --failOnCVSS 7
+        --enableRetired
+
+  - name: Upload Test result
+    uses: actions/upload-artifacts@master
+    with:
+      name: Depcheck report
+      path: ${{github.workspace}}/report
 
 
           
