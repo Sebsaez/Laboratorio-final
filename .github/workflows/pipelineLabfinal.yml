@@ -18,23 +18,10 @@ jobs:
     - name: Checkout code
       uses: action/checkout@v2
 
-    - name: Validando tipo de proyecto
-      id: tipoProyecto
+    - name: Build
       run: |
-        if [ -f "build.gradle"]
-        then
-          echo "Proyecto Java"
-          if grep -q 'id "org.sonarqube" version "3.3"' build.gradle
-          then
-            echo "El plugin de SonarCloud ya esta presente en build.gradle"
-          else
-            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3'\''' build.gradle
-            echo "El plugin de SonarCloud ya está presente en build.gradle"
-            cat build.gradle
-          fi
-        else
-          echo "Tipo de proyecto desconocido"
-        fi
+        chmod 777 gradlew
+        ./gradlew build 
 
     - name: Validando existencia de proyecto en SonarCloud
       id: validateProjectOnSonar
@@ -50,7 +37,35 @@ jobs:
           echo "Se establece rama main como rama por defecto"
           curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.oi/api/project_branches/rename' -d 'name=main   -d 'project=${{ github.event.repository.name }}'
         fi
-          
+
+    - name: Validando tipo de proyecto
+      id: tipoProyecto
+      if: steps.validateProjectOnSonar.outputs.proyectoExiste == '1'
+      run: |
+        if [ -f "build.gradle"]
+        then
+          echo "Proyecto Java"
+          if grep -q 'id "org.sonarqube" version "3.3"' build.gradle
+          then
+            echo "El plugin de SonarCloud ya esta presente en build.gradle"
+          else
+            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3'\''' build.gradle
+            echo "El plugin de SonarCloud ya está presente en build.gradle"
+            cat build.gradle
+          fi
+        else
+          echo "Tipo de proyecto desconocido"
+        fi    
+
+    - name: Run SonarQube analisis
+      run: |
+        ./gradlew sonarqube \
+        -Dsonar.projectKey=${{ github.event.repository.name }} \
+        -Dsonar.organization=labfinaldevsecops \
+        -Dsonar.host.url=https://sonarcloud.oi \
+        -Dsonar.branch.name=featlabfinal \
+
+
 
 
 
