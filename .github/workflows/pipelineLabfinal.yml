@@ -84,39 +84,38 @@ jobs:
 
 #--------------------------------------------------SCA------------------------------------------------#
 
-jobs:
   SCA:
-  needs: SAST
-  runs-on: ubuntu-latest
-  steps:
+    needs: SAST
+    runs-on: ubuntu-latest
+    steps:
 
-  - name: Checkout code
-    uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  - name: Build
+    - name: Build
       run: |
         chmod 777 gradlew
         ./gradlew build 
 
-  - name: Dependency Check
-    uses: dependency-check/Dependency-Check_Action@1.1.0
-    env:
-      JAVA_HOME: /opt/jdk
-    id: Depcheck
-    with: 
-      project: '${{ github.event.repository.name}}'
-      path: '.'
-      format: 'HTML'
-      out: 'report'
-      args: >
-        --failOnCVSS 7
-        --enableRetired
+    - name: Dependency Check
+      uses: dependency-check/Dependency-Check_Action@1.1.0
+      env:
+        JAVA_HOME: /opt/jdk
+      id: Depcheck
+      with: 
+        project: '${{ github.event.repository.name}}'
+        path: '.'
+        format: 'HTML'
+        out: 'report'
+        args: >
+          --failOnCVSS 7
+          --enableRetired
 
-  - name: Upload Test result
-    uses: actions/upload-artifacts@master
-    with:
-      name: Depcheck report
-      path: ${{github.workspace}}/report
+    - name: Upload Test result
+      uses: actions/upload-artifacts@master
+      with:
+        name: Depcheck report
+        path: ${{github.workspace}}/report
 
 
           
