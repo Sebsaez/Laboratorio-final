@@ -128,4 +128,14 @@ jobs:
         path: ${{github.workspace}}/report
 
 
-          
+
+#----------------------------------------------Docker image------------------------------------------------------#
+
+  DockerBuild:
+    needs: SCA 
+    runs-on: self-hosted
+    steps:
+
+    - name: Checkout code
+      uses: action/checkout@v2
+      
