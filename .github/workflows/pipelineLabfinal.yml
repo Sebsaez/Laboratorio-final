@@ -2,7 +2,7 @@ name : Workflow
 on:
   push:
     branches:
-      - featlabfinal
+      - featlabfinal1.1
 
 jobs:
   SAST:
@@ -138,4 +138,3 @@ jobs:
 
     - name: Checkout code
       uses: action/checkout@v2
-      
