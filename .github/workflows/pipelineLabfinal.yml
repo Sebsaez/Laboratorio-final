@@ -160,5 +160,22 @@ jobs:
     - name: Build Docker
       run: |
         docker build --tag sebasaez4516/dockerlabfinal1:latest .
-        
 
+    - name: Push Docker
+      run: |
+        docker push sebasaez4516/dockerlabfinal1:latest
+
+
+#-------------------------------------------Dcoker Scan--------------------------------------------#
+
+  DockerScan:
+    needs:  DockerBuild
+    runs-on:  ubuntu-latest
+    steps:
+
+    - name: Docker Login
+      uses: docker/login-action@v3.0.0
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
