@@ -127,6 +127,12 @@ jobs:
         name: Depcheck report
         path: ${{github.workspace}}/report
 
+    - name: Upload Jar
+      uses: actions/upload-artifacts@master
+      with:
+        name: Jar
+        path: ${{github.workspace}}/build/libs/spring-laboratorio-final-2.6.0.jar
+
 
 
 #----------------------------------------------Docker image------------------------------------------------------#
@@ -138,3 +144,21 @@ jobs:
 
     - name: Checkout code
       uses: action/checkout@v2
+
+    - name: Docker Login
+      uses: docker/login-action@v3.0.0
+      with:
+        username: ${{ secrets.DOCKER_USER}}
+        password: ${{ secrets.DOCKER_PASSWORD}}
+
+    - name: Download JAR
+      uses: action/download-artifact@master
+      with:
+        name: JAR
+        path: ${{github.workspace}}
+
+    - name: Build Docker
+      run: |
+        docker build --tag sebasaez4516/dockerlabfinal1:latest .
+        
+
