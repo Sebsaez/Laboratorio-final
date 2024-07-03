@@ -189,7 +189,23 @@ jobs:
         image-ref: 'sebasaez4516/dockerlabfinal1:latest'
         format: 'table'
 
-
+    - name: Push Docker
+      run: |
+        docker push sebasaez4516/dockerlabfinal1:latest
         
 
+#-------------------------------------------------------DAST---------------------------------------------------------------#
+
+  DAST:
+    needs: DockerScan
+    runs-on: self-hosted
+    steps:
+
+    - name: Despliegue Aplicacion
+      run: |
+        docker run -p 8085:8085 --name laboratorio-final-deploy -d sebasaez4516/dockerlabfinal1:latest
+
+    - name: Sleep 
+      run: |
+        sleep 3
         
