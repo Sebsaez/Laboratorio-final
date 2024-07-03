@@ -184,11 +184,11 @@ jobs:
         docker pull sebasaez4516/dockerlabfinal1:latest
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity7trivy-action@master
+      uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'sebasaez4516/dockerlabfinal1:latest'
         format: 'table'
-        
+
 
         
 
