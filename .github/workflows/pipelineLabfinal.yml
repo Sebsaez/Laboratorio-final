@@ -201,11 +201,17 @@ jobs:
     runs-on: self-hosted
     steps:
 
-    - name: Despliegue Aplicacion
-      run: |
-        docker run -p 8085:8085 --name laboratorio-final-deploy -d sebasaez4516/dockerlabfinal1:latest
+#    - name: Despliegue Aplicacion
+#      run: |
+#        docker run - 8085: --name laboratorio-final-deploy sebasaez4516/dockerlabfinal1:latest
 
-    - name: Sleep 
-      run: |
-        sleep 3
-        
+#    - name: Sleep
+#      run: |
+#        sleep 3
+
+     - name: OWASP ZAP Scan
+       uses: zaproxy/action-baseline@v0.11.0
+       with:
+        target: 'http://localhost:8085'
+         
+      
