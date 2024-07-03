@@ -186,9 +186,10 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity7trivy-action@master
       with:
-        format: 'sebasaez4516/dockerlabfinal1:latest'
+        image-ref: 'sebasaez4516/dockerlabfinal1:latest'
         format: 'table'
         
+
         
 
         
