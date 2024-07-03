@@ -207,11 +207,11 @@ jobs:
       with:
         target: 'http://localhost:8085'
 
-    - name: Upload HTML Report
-       uses: action/upload-artifact@v4
-       with:
-         name: DAST-Report
-         path: DAST.html
+#    - name: Upload HTML Report
+#       uses: action/upload-artifact@v4
+#       with:
+#         name: DAST-Report
+#         path: DAST.html
          
          
       
